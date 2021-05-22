@@ -37,8 +37,8 @@ int time_s = 0;
 int time_m = 0;
 int time_H = 0;
 
-const unsigned long intervalTime_NTPtime = (1000 * 60 * 60); //---Interval in mil sec (1000 = 1s)
-unsigned long previousTime_NTPtime = 0;
+const unsigned long intervalTime = (1000 * 60 * 60); //---Interval in mil sec (1000 = 1s)
+unsigned long previousTime = 0;
 
 /*
  * TimeKeeper
@@ -60,9 +60,9 @@ void timeKeeper() {
   if (time_H == 24)
     time_H = 0;
 
-  if (time_Now - previousTime_NTPtime >= intervalTime_NTPtime) {
+  if (time_Now - previousTime >= intervalTime) {
     timeNTPUpdate();
-    previousTime_NTPtime = time_Now;
+    previousTime = time_Now;
   }
 }
 
@@ -74,7 +74,7 @@ void timeNTPUpdate() {
   time_H = timeClient.getHours();
   time_m = timeClient.getMinutes();
   time_s = timeClient.getSeconds();
-  Serial.println("Time set to: " + timeClient.getFormattedTime());
+  Serial.println("Time set to NTP time: " + timeClient.getFormattedTime());
 }
 
 /*
@@ -100,7 +100,7 @@ void myWebServerHandle_gettime() {
 String html_Time() {
   String html_text = html_Head();
   html_text +="<body>\n";
-  html_text +="<h1>Web Control</h1>\n";
+  html_text +="<h1>Web Control - Time</h1>\n";
   html_text +="<h3>Time</h3>\n";
 
   if (myWebServer.arg("doSetTime") == "1") { //---Check if should Connect

@@ -210,7 +210,7 @@ String html_Head() {
 String html_Root() {
   String html_text = html_Head();
   html_text +="<body>\n";
-  html_text +="<h1>Web Control Main</h1>\n";
+  html_text +="<h1>Coetzee Perde Voer</h1>\n";
   html_text +="<a class=\"button_large\" href=\"/wifi_config\">Configure Wifi</a>\n";
   html_text +="<a class=\"button_large\" href=\"/time\">Time</a>\n";
   html_text +="<a class=\"button_large\" href=\"/unit\">Unit</a>\n";

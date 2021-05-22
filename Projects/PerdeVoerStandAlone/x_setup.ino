@@ -12,9 +12,6 @@ void setup() {
 
   wifi_start_connect(); //---Start Wifi Connect Sequence
 
-  timeClient.begin(); //---Set NTP time client
-  timeNTPUpdate(); //---Update time
-
   Serial.println("Ready...");
     
 }
