@@ -17,12 +17,17 @@ void loop() {
     Serial.print(lastTrig_H);
     Serial.print(":");
     Serial.println(lastTrig_m);
+    //---Set run start
+    runStatus = HIGH;
+    trigTime_start = time_Now;
+    //---Switch ON
     digitalWrite(trigPin1, LOW);
     digitalWrite(trigPin2, LOW);
-    delay(trigDuration * 1000);
-    digitalWrite(trigPin1, HIGH);
-    digitalWrite(trigPin2, HIGH);
+    //---Trigger done
     trigStatus = LOW;
   }
+
+  //---Check Run Status
+  checkAction();
 
 }

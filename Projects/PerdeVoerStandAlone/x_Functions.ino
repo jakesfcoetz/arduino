@@ -2,8 +2,8 @@
  * TimeKeeper
  */
 void timeKeeper() {
-  time_Now = millis(); //--- the number of milliseconds that have passed since boot
-  time_s = (time_Now/1000) - time_Pre; //--- the number of seconds that have passed since the last time 60 seconds was reached.
+  time_Now = (millis()/1000); //--- the number of milliseconds that have passed since boot
+  time_s = time_Now - time_Pre; //--- the number of seconds that have passed since the last time 60 seconds was reached.
   
   if (time_s >= 60) {
     time_Pre = time_Pre + 60;
@@ -36,4 +36,18 @@ void sched_Trigger() {
         schedTrig[i][2] = 0;
     }
   } 
+}
+
+/*
+ * Check if feeding sequence should still be running
+ */
+void checkAction() {
+  if (runStatus) { //---Still Running
+    if ((time_Now - trigTime_start) > trigDuration) { //---if time done, switch off
+      Serial.println("Switch Off");
+      runStatus = LOW;
+      digitalWrite(trigPin1, HIGH);
+      digitalWrite(trigPin2, HIGH);
+    }
+  }
 }
