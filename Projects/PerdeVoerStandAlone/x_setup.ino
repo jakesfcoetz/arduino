@@ -10,7 +10,7 @@ void setup() {
   delay(1000); //---wait for serial monitor to start
   Serial.println(); //---new line in case junk has been printed
 
-  wifi_start_connect(); //---Start Wifi Connect Sequence
+  wifi_start(); //---Start Wifi AP Setup
 
   Serial.println("Ready...");
     
