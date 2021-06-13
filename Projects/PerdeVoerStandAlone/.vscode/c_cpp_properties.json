@@ -22,6 +22,7 @@
                 "d:\\Engineering\\Programming\\Github\\arduino\\Projects\\ArduinoOutput\\core",
                 "C:\\Users\\jakes\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\cores\\esp8266",
                 "C:\\Users\\jakes\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\variants\\generic",
+                "C:\\Users\\jakes\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
                 "C:\\Users\\jakes\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\libraries\\ESP8266WiFi\\src",
                 "C:\\Users\\jakes\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\libraries\\ESP8266WebServer\\src",
                 "c:\\users\\jakes\\appdata\\local\\arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\3.0.0-newlib4.0.0-gnu23-48f7b08\\xtensa-lx106-elf\\include\\c++\\10.2.0",

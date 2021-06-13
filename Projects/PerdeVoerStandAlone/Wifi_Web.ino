@@ -89,23 +89,28 @@ void myWebServerHandle_trigger()
 //---JSON Only
 void myWebServerHandle_get()
 {
-  String response = createJSONResponse();
-  Serial.println("JSON call: get = " + response);
+  response = createJSONResponse();
+  Serial.println("Get Response: " + response);
+  Serial.println("==================================================================");
   myWebServer.send(200, "application/json", response);
 }
 
 void myWebServerHandle_set()
 {
-  //---Read settings and update ---<>
-  String response = createJSONResponse();
-  Serial.println("JSON call: set = " + response);
+  Serial.println("===== Update Settings ============================================");
+  Serial.println("Request: " + myWebServer.arg("plain"));
+  bodyParse(myWebServer.arg("plain"));
+  response = createJSONResponse();
+  Serial.println("Response: " + response);
+  Serial.println("==================================================================");
   myWebServer.send(200, "application/json", response);
 }
 
 void myWebServerHandle_trig()
 {
   setToTrig();
-  String response = createJSONResponse();
-  Serial.println("JSON call: trig = " + response);
+  response = createJSONResponse();
+  Serial.println("Trig Response: " + response);
+  Serial.println("==================================================================");
   myWebServer.send(200, "application/json", response);
 }

@@ -30,9 +30,9 @@ void sched_Trigger()
   for (int i = 0; i < (sizeof(schedTrig) / sizeof(schedTrig[0])); i++)
   {
     if ((time_H == schedTrig[i][0]) and (time_m == schedTrig[i][1]))
-    { //---Trigger Time is Now
-      if (schedTrig[i][2] == 0)
-      {                      //---Check if not yet Done, Do Trigger
+    {                           //---Trigger Time is Now
+      if (schedTrig[i][2] == 0) //---Check if not yet Done, Do Trigger
+      {
         schedTrig[i][2] = 1; //---Mark as Done
         trigStatus = HIGH;
       }
@@ -63,29 +63,131 @@ void checkAction()
 }
 
 /*
- * Update Time
- */
-void updateTime(int new_time_H, int new_time_m)
-{
-  if ((new_time_H >= 0) and (new_time_H <= 23) and (new_time_m >= 0) and (new_time_m <= 59))
-  {
-    time_H = new_time_H;
-    time_m = new_time_m;
-    Serial.print("Time set to: ");
-    Serial.print(time_H);
-    Serial.print(":");
-    Serial.println(time_m);
-  }
-}
-
-/*
  * Setup trigger flag to start trigger sequence
  */
 void setToTrig()
 {
-    lastTrig_H = time_H;
-    lastTrig_m = time_m;
-    trigStatus = HIGH;
+  lastTrig_H = time_H;
+  lastTrig_m = time_m;
+  trigStatus = HIGH;
+}
+
+/*
+ * Parse settings received via JSON Body
+ */
+void bodyParse(String body)
+{
+  DeserializationError error = deserializeJson(doc, body); //--- Parse body string to JSON doc
+
+  if (error)
+  {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+  }
+
+  const char *curTime = doc["curTime"];
+  const char *sched1 = doc["sched"]["sched1"];
+  const char *sched2 = doc["sched"]["sched2"];
+  const char *sched3 = doc["sched"]["sched3"];
+  const char *sched4 = doc["sched"]["sched4"];
+  const char *sched5 = doc["sched"]["sched5"];
+
+  //--- Set Current Time
+  updateTime((curTime[0] - '0') * 10 + (curTime[1] - '0'), (curTime[3] - '0') * 10 + (curTime[4] - '0'));
+
+  //--- Update Trigger Duration
+  updateTrigDur(doc["trigDur"].as<int>());
+
+  //--- Update New Schedule 1
+  if (String(sched1) != "")
+  {
+    newSchedTrig[0][0] = (sched1[0] - '0') * 10 + (sched1[1] - '0');
+    newSchedTrig[0][1] = (sched1[3] - '0') * 10 + (sched1[4] - '0');
+  }
+  else
+  {
+    newSchedTrig[0][0] = -1;
+    newSchedTrig[0][1] = 0;
+  }
+
+  //--- Update New Schedule 2
+  if (String(sched2) != "")
+  {
+    newSchedTrig[1][0] = (sched2[0] - '0') * 10 + (sched2[1] - '0');
+    newSchedTrig[1][1] = (sched2[3] - '0') * 10 + (sched2[4] - '0');
+  }
+  else
+  {
+    newSchedTrig[1][0] = -1;
+    newSchedTrig[1][1] = 0;
+  }
+
+  //--- Update New Schedule 3
+  if (String(sched3) != "")
+  {
+    newSchedTrig[2][0] = (sched3[0] - '0') * 10 + (sched3[1] - '0');
+    newSchedTrig[2][1] = (sched3[3] - '0') * 10 + (sched3[4] - '0');
+  }
+  else
+  {
+    newSchedTrig[2][0] = -1;
+    newSchedTrig[2][1] = 0;
+  }
+
+  //--- Update New Schedule 4
+  if (String(sched4) != "")
+  {
+    newSchedTrig[3][0] = (sched4[0] - '0') * 10 + (sched4[1] - '0');
+    newSchedTrig[3][1] = (sched4[3] - '0') * 10 + (sched4[4] - '0');
+  }
+  else
+  {
+    newSchedTrig[3][0] = -1;
+    newSchedTrig[3][1] = 0;
+  }
+
+  //--- Update New Schedule 5
+  if (String(sched5) != "")
+  {
+    newSchedTrig[4][0] = (sched5[0] - '0') * 10 + (sched5[1] - '0');
+    newSchedTrig[4][1] = (sched5[3] - '0') * 10 + (sched5[4] - '0');
+  }
+  else
+  {
+    newSchedTrig[4][0] = -1;
+    newSchedTrig[4][1] = 0;
+  }
+
+  updateSched();
+}
+
+/*
+ * Update Time
+ */
+void updateTime(int new_time_H, int new_time_m)
+{
+  Serial.print("Check Current Time: ");
+  if ((new_time_H != time_H) and (new_time_m != time_m))
+  {
+    if ((new_time_H >= 0) and (new_time_H <= 23) and (new_time_m >= 0) and (new_time_m <= 59))
+    {
+      time_H = new_time_H;
+      time_m = new_time_m;
+      Serial.print("set to: ");
+      Serial.print(time_H);
+      Serial.print(":");
+      Serial.println(time_m);
+    }
+    else
+    {
+      Serial.println("UNCHANGED - invalid");
+    }
+  }
+  else
+  {
+    Serial.println("UNCHANGED");
+  }
 }
 
 /*
@@ -93,33 +195,54 @@ void setToTrig()
  */
 void updateTrigDur(int new_trig_duration)
 {
+  Serial.print("Check Trigger Duration: ");
   if ((new_trig_duration > 0) and         //---Min value validation
       (new_trig_duration < 30) and        //---Max value validation
       (new_trig_duration != trigDuration) //---If different
   )
   {
-    Serial.println("Trigger Duration set to: " + String(trigDuration));
     trigDuration = new_trig_duration;
+    Serial.println("set to: " + String(trigDuration));
+  }
+  else
+  {
+    Serial.println("UNCHANGED");
   }
 }
 
 /*
- * Update Schedule ---<> still to do
+ * Update Schedule - Only for JSON body parse
  */
 void updateSched()
 {
   for (int i = 0; i < (sizeof(schedTrig) / sizeof(schedTrig[0])); i++)
   {
-    int new_sched_time_H = 0;                                                            //---<> Get New Val
-    int new_sched_time_m = 0;                                                            //---<> Get New Val
-    if ((new_sched_time_H >= 0) and (new_sched_time_H <= 23) and                         //---Hour Validation
-        (new_sched_time_m >= 0) and (new_sched_time_m <= 59) and                         //---Min Validation
-        ((new_sched_time_H != schedTrig[i][0]) or (new_sched_time_m != schedTrig[i][1])) //---If different
-    )
+    Serial.print("Check Shedule: " + String(i + 1) + " ");
+    Serial.print(String(schedTrig[i][0]) + ":" + String(schedTrig[i][1]));
+    Serial.print(" --> ");
+    Serial.print(String(newSchedTrig[i][0]) + ":" + String(newSchedTrig[i][1]) + " ");
+
+    if ((newSchedTrig[i][0] != schedTrig[i][0]) or (newSchedTrig[i][1] != schedTrig[i][1])) //---If different
     {
-      schedTrig[i][0] = new_sched_time_H;
-      schedTrig[i][1] = new_sched_time_m;
-      Serial.println("Shedule " + String(i + 1) + " set to: " + String(schedTrig[i][0]) + ":" + String(schedTrig[i][1]));
+      if ((newSchedTrig[i][0] >= 0) and (newSchedTrig[i][0] <= 23) and //---Hour Validation
+          (newSchedTrig[i][1] >= 0) and (newSchedTrig[i][1] <= 59)     //---Min Validation
+      )
+      {
+        Serial.print("UPDATE ");
+        schedTrig[i][0] = newSchedTrig[i][0];
+        schedTrig[i][1] = newSchedTrig[i][1];
+      }
+      else
+      {
+        Serial.print("CLEAR ");
+        schedTrig[i][0] = -1;
+        schedTrig[i][1] = 0;
+      }
+      Serial.println("set to: " + String(schedTrig[i][0]) + ":" + String(schedTrig[i][1]));
+    }
+    else
+    {
+      Serial.println("UNCHANGED");
     }
   }
 }
@@ -130,27 +253,75 @@ void updateSched()
  *   response: boolean,
  *   data: {
  *     curTime: string = (hh:mm)
- *     sched: string[] = [(hh:mm), (hh:mm), ...]
  *     trigDur: number
  *     lastTrig: string = (hh:mm)
+ *     sched: {
+ *       sched1: string = (hh:mm)
+ *       sched2: string = (hh:mm)
+ *       sched3: string = (hh:mm)
+ *       sched4: string = (hh:mm)
+ *       sched5: string = (hh:mm)
+ *     }
  *   }
  * }
  */
 
 String createJSONResponse()
 {
-  String jsonResponse = "{ \"response\": \"true\", \"data\": {";
+  String jsonResponse = "";
+
   sprintf(tempTimeVar, "%02d:%02d", time_H, time_m);
-  jsonResponse += "\"curTime\": \"" + String(tempTimeVar) + "\", ";
-  jsonResponse += "\"sched\": [";
-  sprintf(tempTimeVar, "%02d:%02d", schedTrig[0][0], schedTrig[0][1]);
-  jsonResponse += "\"" + String(tempTimeVar) + "\", ";
-  sprintf(tempTimeVar, "%02d:%02d", schedTrig[1][0], schedTrig[1][1]);
-  jsonResponse += "\"" + String(tempTimeVar) + "\" ";
-  jsonResponse += "], ";
-  jsonResponse += "\"trigDur\": " + String(trigDuration) + ", ";
+  doc["curTime"] = tempTimeVar;
+  doc["trigDur"] = trigDuration;
   sprintf(tempTimeVar, "%02d:%02d", lastTrig_H, lastTrig_m);
-  jsonResponse += "\"lastTrig\": \"" + String(tempTimeVar) + "\" ";
-  jsonResponse += "}}";
-  return jsonResponse;
+  doc["lastTrig"] = tempTimeVar;
+  if (schedTrig[0][0] >= 0)
+  {
+    sprintf(tempTimeVar, "%02d:%02d", schedTrig[0][0], schedTrig[0][1]);
+    doc["sched"]["sched1"] = tempTimeVar;
+  }
+  else
+  {
+    doc["sched"]["sched1"] = "";
+  }
+  if (schedTrig[1][0] >= 0)
+  {
+    sprintf(tempTimeVar, "%02d:%02d", schedTrig[1][0], schedTrig[1][1]);
+    doc["sched"]["sched2"] = tempTimeVar;
+  }
+  else
+  {
+    doc["sched"]["sched2"] = "";
+  }
+  if (schedTrig[2][0] >= 0)
+  {
+    sprintf(tempTimeVar, "%02d:%02d", schedTrig[2][0], schedTrig[2][1]);
+    doc["sched"]["sched3"] = tempTimeVar;
+  }
+  else
+  {
+    doc["sched"]["sched3"] = "";
+  }
+  if (schedTrig[3][0] >= 0)
+  {
+    sprintf(tempTimeVar, "%02d:%02d", schedTrig[3][0], schedTrig[3][1]);
+    doc["sched"]["sched4"] = tempTimeVar;
+  }
+  else
+  {
+    doc["sched"]["sched4"] = "";
+  }
+  if (schedTrig[4][0] >= 0)
+  {
+    sprintf(tempTimeVar, "%02d:%02d", schedTrig[4][0], schedTrig[4][1]);
+    doc["sched"]["sched5"] = tempTimeVar;
+  }
+  else
+  {
+    doc["sched"]["sched5"] = "";
+  }
+
+  serializeJson(doc, jsonResponse);
+
+  return "{ \"response\": \"true\", \"data\": " + jsonResponse + "}";
 }
