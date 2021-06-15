@@ -55,6 +55,7 @@ void checkAction()
     if ((time_Now - trigTime_start) > trigDuration)
     { //---if time done, switch off
       Serial.println("Switch Off");
+      Serial.println("==================================================================");
       runStatus = LOW;
       digitalWrite(trigPin1, HIGH);
       digitalWrite(trigPin2, HIGH);

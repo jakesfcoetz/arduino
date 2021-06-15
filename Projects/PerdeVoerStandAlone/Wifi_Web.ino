@@ -49,9 +49,12 @@ bool wifi_create_ap()
 void webserver_setup()
 {
   //--- JSON
-  myWebServer.on("/api/get", myWebServerHandle_get);
-  myWebServer.on("/api/set", myWebServerHandle_set);
-  myWebServer.on("/api/trig", myWebServerHandle_trig);
+  myWebServer.on("/api/get", HTTP_GET, myWebServerHandle_get);
+  myWebServer.on("/api/get", HTTP_OPTIONS, sendCrossOriginHeader);
+  myWebServer.on("/api/set", HTTP_POST, myWebServerHandle_set);
+  myWebServer.on("/api/set", HTTP_OPTIONS, sendCrossOriginHeader);
+  myWebServer.on("/api/trig", HTTP_GET, myWebServerHandle_trig);
+  myWebServer.on("/api/trig", HTTP_OPTIONS, sendCrossOriginHeader);
   //--- HTML
   myWebServer.on("/", myWebServerHandle_Root);
   myWebServer.on("/unit", myWebServerHandle_unit);
@@ -65,6 +68,7 @@ void webserver_setup()
 /*
  * Functions for URL handlers
  */
+//--- HTML
 void myWebServerHandle_Root()
 {
   myWebServer.send(200, "text/html", html_Root());
@@ -86,12 +90,31 @@ void myWebServerHandle_trigger()
   myWebServer.send(200, "text/html", html_Unit());
 }
 
+//--- CORS
+void corsHeaders()
+{
+  myWebServer.sendHeader(F("access-control-allow-credentials"), F("false"));
+  myWebServer.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
+  myWebServer.sendHeader(F("Access-Control-Max-Age"), F("600"));
+  myWebServer.sendHeader(F("Access-Control-Allow-Methods"), F("PUT,POST,GET,OPTIONS"));
+  myWebServer.sendHeader(F("Access-Control-Allow-Headers"), F("*"));
+}
+
+void sendCrossOriginHeader()
+{
+  corsHeaders();
+  myWebServer.send(204);
+  Serial.println("Send Options");
+  Serial.println("==================================================================");
+}
+
 //---JSON Only
 void myWebServerHandle_get()
 {
   response = createJSONResponse();
   Serial.println("Get Response: " + response);
   Serial.println("==================================================================");
+  corsHeaders();
   myWebServer.send(200, "application/json", response);
 }
 
@@ -103,6 +126,7 @@ void myWebServerHandle_set()
   response = createJSONResponse();
   Serial.println("Response: " + response);
   Serial.println("==================================================================");
+  corsHeaders();
   myWebServer.send(200, "application/json", response);
 }
 
@@ -112,5 +136,6 @@ void myWebServerHandle_trig()
   response = createJSONResponse();
   Serial.println("Trig Response: " + response);
   Serial.println("==================================================================");
+  corsHeaders();
   myWebServer.send(200, "application/json", response);
 }
