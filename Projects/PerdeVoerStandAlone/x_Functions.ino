@@ -1,3 +1,6 @@
+//=========================================================================================
+//====================================== Loop Functions ===================================
+
 /*
  * TimeKeeper
  */
@@ -55,7 +58,7 @@ void checkAction()
     if ((time_Now - trigTime_start) > trigDuration)
     { //---if time done, switch off
       Serial.println("Switch Off");
-      Serial.println("==================================================================");
+      Serial.println("====================================");
       runStatus = LOW;
       digitalWrite(trigPin1, HIGH);
       digitalWrite(trigPin2, HIGH);
@@ -72,6 +75,9 @@ void setToTrig()
   lastTrig_m = time_m;
   trigStatus = HIGH;
 }
+
+//=========================================================================================
+//================================== Settings Functions ===================================
 
 /*
  * Parse settings received via JSON Body
@@ -175,7 +181,7 @@ void updateTime(int new_time_H, int new_time_m)
     {
       time_H = new_time_H;
       time_m = new_time_m;
-      Serial.print("set to: ");
+      Serial.print("set to ");
       Serial.print(time_H);
       Serial.print(":");
       Serial.println(time_m);
@@ -203,7 +209,7 @@ void updateTrigDur(int new_trig_duration)
   )
   {
     trigDuration = new_trig_duration;
-    Serial.println("set to: " + String(trigDuration));
+    Serial.println("set to " + String(trigDuration));
   }
   else
   {
@@ -239,7 +245,7 @@ void updateSched()
         schedTrig[i][0] = -1;
         schedTrig[i][1] = 0;
       }
-      Serial.println("set to: " + String(schedTrig[i][0]) + ":" + String(schedTrig[i][1]));
+      Serial.println("set to " + String(schedTrig[i][0]) + ":" + String(schedTrig[i][1]));
     }
     else
     {
@@ -247,6 +253,9 @@ void updateSched()
     }
   }
 }
+
+//=========================================================================================
+//================================= Create JSON Response ==================================
 
 /*
  * Create JSON Response

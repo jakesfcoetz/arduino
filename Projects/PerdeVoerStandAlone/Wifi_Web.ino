@@ -21,12 +21,12 @@ void wifi_start()
   {
     Serial.print("AP Created with IP: ");
     Serial.println(WiFi.softAPIP());
+    webserver_setup();
   }
   else
   {
     Serial.println("AP failed");
   }
-  webserver_setup();
 }
 
 /*
@@ -50,47 +50,18 @@ void webserver_setup()
 {
   //--- JSON
   myWebServer.on("/api/get", HTTP_GET, myWebServerHandle_get);
-  myWebServer.on("/api/get", HTTP_OPTIONS, sendCrossOriginHeader);
   myWebServer.on("/api/set", HTTP_POST, myWebServerHandle_set);
-  myWebServer.on("/api/set", HTTP_OPTIONS, sendCrossOriginHeader);
   myWebServer.on("/api/trig", HTTP_GET, myWebServerHandle_trig);
-  myWebServer.on("/api/trig", HTTP_OPTIONS, sendCrossOriginHeader);
-  //--- HTML
-  myWebServer.on("/", myWebServerHandle_Root);
-  myWebServer.on("/unit", myWebServerHandle_unit);
-  myWebServer.on("/time", myWebServerHandle_time);
-  myWebServer.on("/unit/trigger", myWebServerHandle_trigger);
-  myWebServer.onNotFound(myWebServerHandle_Root);
-  myWebServer.begin(); //---Start WEB server
+  myWebServer.onNotFound(sendCrossOriginHeader); //--- All other including OPTIONS requests
+  myWebServer.begin();                           //---Start WEB server
   Serial.println("Web Server started");
 }
 
 /*
- * Functions for URL handlers
+ * Helper Functions
  */
-//--- HTML
-void myWebServerHandle_Root()
-{
-  myWebServer.send(200, "text/html", html_Root());
-}
 
-void myWebServerHandle_unit()
-{
-  myWebServer.send(200, "text/html", html_Unit());
-}
-
-void myWebServerHandle_time()
-{
-  myWebServer.send(200, "text/html", html_Time());
-}
-
-void myWebServerHandle_trigger()
-{
-  setToTrig();
-  myWebServer.send(200, "text/html", html_Unit());
-}
-
-//--- CORS
+//--- CORS Headers
 void corsHeaders()
 {
   myWebServer.sendHeader(F("access-control-allow-credentials"), F("false"));
@@ -100,42 +71,42 @@ void corsHeaders()
   myWebServer.sendHeader(F("Access-Control-Allow-Headers"), F("*"));
 }
 
-void sendCrossOriginHeader()
-{
-  corsHeaders();
-  myWebServer.send(204);
-  Serial.println("Send Options");
-  Serial.println("==================================================================");
-}
-
-//---JSON Only
-void myWebServerHandle_get()
+//--- Respond to requests
+void httpRespondSettings()
 {
   response = createJSONResponse();
-  Serial.println("Get Response: " + response);
-  Serial.println("==================================================================");
   corsHeaders();
   myWebServer.send(200, "application/json", response);
+  Serial.println("====================================");
+}
+
+/*
+ * Functions for URL handlers
+ */
+
+void sendCrossOriginHeader()
+{
+  Serial.println("Send Options");
+  corsHeaders();
+  myWebServer.send(204);
+}
+
+void myWebServerHandle_get()
+{
+  Serial.println("Request: Get Settings");
+  httpRespondSettings();
 }
 
 void myWebServerHandle_set()
 {
-  Serial.println("===== Update Settings ============================================");
-  Serial.println("Request: " + myWebServer.arg("plain"));
+  Serial.println("Request: Set Settings");
   bodyParse(myWebServer.arg("plain"));
-  response = createJSONResponse();
-  Serial.println("Response: " + response);
-  Serial.println("==================================================================");
-  corsHeaders();
-  myWebServer.send(200, "application/json", response);
+  httpRespondSettings();
 }
 
 void myWebServerHandle_trig()
 {
+  Serial.println("Request: Trigger");
   setToTrig();
-  response = createJSONResponse();
-  Serial.println("Trig Response: " + response);
-  Serial.println("==================================================================");
-  corsHeaders();
-  myWebServer.send(200, "application/json", response);
+  httpRespondSettings();
 }
