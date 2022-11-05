@@ -1,8 +1,7 @@
 /*
  * ESP01
- * Basic Webserver to switch Pin 2 LED (Active Low)
- * ( Can be used on program jig )
-*/
+ * Basic Webserver to switch Pin 2 LED (Active Low) with MQTT and WEB interface
+ * ( Can be used on program jig )*/
 
 //===== Variables
 const int trigPin = 2; //---Connect led to pin 3 (GPIO2) (Active LOW)

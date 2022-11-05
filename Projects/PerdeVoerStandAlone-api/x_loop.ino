@@ -3,7 +3,7 @@ void loop()
   //---Update Time
   timeKeeper();
 
-  //---Listen for incomming HTML requests
+  //---Listen for incoming HTML requests
   myWebServer.handleClient();
 
   //---Check Trigger Schedule

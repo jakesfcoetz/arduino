@@ -59,7 +59,7 @@
 //----- void mqtt_callback(char* topic, byte* payload, unsigned int length)
 //----- bool mqtt_connect()
 //----- bool mqtt_check_connection()
-//----- void mqtt_publish(const char* mqtt_pub_toppic, const char* mqtt_pub_payload)
+//----- void mqtt_publish(const char* mqtt_pub_topic, const char* mqtt_pub_payload)
 //=================================== Test on MQTT Server =================================
 //----- mosquitto_sub -d -u coetzee_mqtt -P coetzeemqtt -t MY_ESP8266_BUT
 //----- mosquitto_pub -d -u coetzee_mqtt -P coetzeemqtt -t MY_ESP8266_LED -m "0"
@@ -98,7 +98,7 @@ bool mqtt_connect() {
   Serial.print("Attempting MQTT connection...");
   if (client.connect(mqttClientID, mqtt_username, mqtt_password)) {
     Serial.println("Connected");
-    //---Set Callback to listen for incomming publications
+    //---Set Callback to listen for incoming publications
     client.setCallback(mqtt_callback);
     mqtt_subscriptions();
     return true;
@@ -109,7 +109,7 @@ bool mqtt_connect() {
 }
 
 /*
- * Check Connction to MQTT Broker
+ * Check Connection to MQTT Broker
  */
 bool mqtt_check_connection() {
   client.loop(); //---Check incoming MQTT messages
@@ -125,8 +125,8 @@ bool mqtt_check_connection() {
 /*
  * PUBLISH to the MQTT Broker
  */
-void mqtt_publish(const char* mqtt_pub_toppic, const char* mqtt_pub_payload) {
-  if (client.publish(mqtt_pub_toppic, mqtt_pub_payload)) {
+void mqtt_publish(const char* mqtt_pub_topic, const char* mqtt_pub_payload) {
+  if (client.publish(mqtt_pub_topic, mqtt_pub_payload)) {
     Serial.println("Message sent!");
   }
   //---If the message failed, try again
@@ -134,6 +134,6 @@ void mqtt_publish(const char* mqtt_pub_toppic, const char* mqtt_pub_payload) {
     Serial.println("Message failed to send. Reconnecting to MQTT Broker and trying again");
     mqtt_connect();
     delay(10);
-    client.publish(mqtt_pub_toppic, mqtt_pub_payload);
+    client.publish(mqtt_pub_topic, mqtt_pub_payload);
   }
 }

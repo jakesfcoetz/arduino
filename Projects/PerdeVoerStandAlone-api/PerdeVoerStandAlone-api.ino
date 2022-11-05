@@ -1,6 +1,6 @@
 /*
  * ESP01
- * Auto Feeder Web Server with motor control for 2 ports
+ * Auto Feeder Web Server with motor control for 2 ports - API interface
 */
 
 #include <ArduinoJson.h>

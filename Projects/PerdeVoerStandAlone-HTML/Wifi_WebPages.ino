@@ -55,17 +55,17 @@ String html_Unit() {
   html_text += "<p>Last Triggered: " + String(lastTrig_H) + ":" + String(lastTrig_m) + "</p>";
   html_text += "Trigger Duration: ";
 
-  if (myWebServer.arg("doSetTrigDur") == "1") { //---Check if Triggrd Duration has been changed
+  if (myWebServer.arg("doSetTrigDur") == "1") { //---Check if Triggered Duration has been changed
     int new_trig_duration = myWebServer.arg("trig_duration").toInt();
     if ((new_trig_duration > 0) and           //---Min value validation
         (new_trig_duration < 30) and          //---Max value validation
         (new_trig_duration != trigDuration)   //---If different
-       ) {
+        ) {
         Serial.println("Trigger Duration set to: " + String(trigDuration));
         trigDuration = new_trig_duration;
     }
-   }
-   
+  }
+
   html_text += "<input type='text' size=2 name='trig_duration' id='trig_duration' value='" + String(trigDuration) + "'>s";
   html_text += "<input type='hidden' name='doSetTrigDur' id='doSetTrigDur' value=0>";
   html_text += "<input type='submit' class='button_small' value='Set Duration' onclick=document.getElementById('doSetTrigDur').value=1>";
@@ -82,7 +82,7 @@ String html_Unit() {
           ) {
         schedTrig[i][0] = new_sched_time_H;
         schedTrig[i][1] = new_sched_time_m;
-        Serial.println("Shedule " + String(i + 1) + " set to: " + String(new_sched_time_H) + ":" + String(new_sched_time_m));
+        Serial.println("Schedule " + String(i + 1) + " set to: " + String(new_sched_time_H) + ":" + String(new_sched_time_m));
       }
     }
     
@@ -91,7 +91,7 @@ String html_Unit() {
     html_text += " : ";
     html_text += "<input type='text' size=2 name='time_m" + String(i) + "' id='time_m" + String(i) + "' value='" + String(schedTrig[i][1]) + "'>";
     html_text += "<br>";
-   }
+  }
   html_text += "<input type='hidden' name='doSetSched' id='doSetSched' value=0>";
   html_text += "<input type='submit' class='button_small' value='Set Schedule' onclick=document.getElementById('doSetSched').value=1>";
   html_text += "</form><br>";

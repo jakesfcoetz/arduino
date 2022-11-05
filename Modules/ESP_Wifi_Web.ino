@@ -40,7 +40,7 @@ void print_Wifi_Status() {
   Serial.print(WiFi.status());
   Serial.print(" AP IP: ");
   Serial.print(WiFi.softAPIP());
-  Serial.print(" STAION IP: ");
+  Serial.print(" STATION IP: ");
   Serial.print(WiFi.localIP());
   Serial.print(" MAC: ");
   Serial.println(Unit_MAC_ID);

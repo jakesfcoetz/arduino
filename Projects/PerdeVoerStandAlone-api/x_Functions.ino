@@ -224,7 +224,7 @@ void updateSched()
 {
   for (int i = 0; i < (sizeof(schedTrig) / sizeof(schedTrig[0])); i++)
   {
-    Serial.print("Check Shedule: " + String(i + 1) + " ");
+    Serial.print("Check Schedule: " + String(i + 1) + " ");
     Serial.print(String(schedTrig[i][0]) + ":" + String(schedTrig[i][1]));
     Serial.print(" --> ");
     Serial.print(String(newSchedTrig[i][0]) + ":" + String(newSchedTrig[i][1]) + " ");
