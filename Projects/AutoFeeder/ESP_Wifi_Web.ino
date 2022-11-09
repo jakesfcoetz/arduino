@@ -54,7 +54,7 @@ void wifi_start_connect() {
   WiFi.macAddress(macAddr);
   sprintf(Unit_MAC_ID, "%02X:%02X:%02X:%02X:%02X:%02X", macAddr[0], macAddr[1], macAddr[2], macAddr[3], macAddr[4], macAddr[5]);
   
-  WiFi.mode(WIFI_AP_STA); //---WIFI_STA (1) / (WIFI_AP (2) / WIFI_AP_STA (3) / WIFI_OFF)
+  WiFi.mode(WIFI_AP_STA); //---WIFI_STA (1) / WIFI_AP (2) / WIFI_AP_STA (3) / WIFI_OFF
   if (wifi_create_ap()) {
     Serial.println("AP Created");
   }
@@ -116,6 +116,7 @@ void wifi_connect(const char* wifi_ssid, const char* wifi_password) {
   }
   else {
     Serial.println("WiFi NOT connected...");
+    wifi_start_connect();
   }
 
   print_Wifi_Status();
@@ -210,7 +211,7 @@ String html_Head() {
 String html_Root() {
   String html_text = html_Head();
   html_text +="<body>\n";
-  html_text +="<h1>Coetzee Perde Voer</h1>\n";
+  html_text +="<h1>Auto Feeder</h1>\n";
   html_text +="<a class=\"button_large\" href=\"/wifi_config\">Configure Wifi</a>\n";
   html_text +="<a class=\"button_large\" href=\"/time\">Time</a>\n";
   html_text +="<a class=\"button_large\" href=\"/unit\">Unit</a>\n";
