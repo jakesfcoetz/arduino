@@ -166,10 +166,10 @@ void myWebServerHandle_Wifi_Config() {
   myWebServer.send(200, "text/html", html_Wifi_Config());
   if (myWebServer.arg("doConnect") == "1") { //---Check if should Connect
     //---Define char array for String variables
-    char mySSID[sizeof(myWebServer.arg("conSSID"))];
-    char myPSW[sizeof(myWebServer.arg("conPSW"))];
-    myWebServer.arg("conSSID").toCharArray(mySSID, sizeof(myWebServer.arg("conSSID")));
-    myWebServer.arg("conPSW").toCharArray(myPSW, sizeof(myWebServer.arg("conPSW")));
+    char mySSID[myWebServer.arg("conSSID").length() + 1];
+    char myPSW[myWebServer.arg("conPSW").length() + 1];
+    myWebServer.arg("conSSID").toCharArray(mySSID, myWebServer.arg("conSSID").length() + 1);
+    myWebServer.arg("conPSW").toCharArray(myPSW, myWebServer.arg("conPSW").length() + 1);
     wifi_connect(mySSID, myPSW); //---Connect Wifi
   }
 }

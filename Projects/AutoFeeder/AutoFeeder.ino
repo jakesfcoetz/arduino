@@ -9,6 +9,3 @@ bool trigStatus = LOW; //---OFF
 int lastTrig_H = 0;
 int lastTrig_m = 0;
 int schedTrig[][3] = {{6,0,0}, {14,0,0}, {22,0,0}}; //---{H,m,ISSET}
-
-//=====MQTT subscription topic declarations (project specific)
-const char* mqtt_topic_trig = "Voer/Perde/Trig";
