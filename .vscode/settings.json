@@ -12,5 +12,8 @@
     "SSID",
     "Voer",
     "webserver"
-  ]
+  ],
+  "C_Cpp.intelliSenseEngine": "Tag Parser",
+  "arduino.path": "C:\\Program Files\\Arduino CLI",
+  "arduino.useArduinoCli": true
 }
