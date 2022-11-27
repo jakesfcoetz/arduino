@@ -128,7 +128,7 @@ void wifi_connect(const char* wifi_ssid, const char* wifi_password) {
  */
 bool wifi_create_ap() {
   //---Default IP: 192.168.4.1
-  const char *ap_ssid = Unit_MAC_ID;
+  const char *ap_ssid = "CoetzeeAutoFeederGrace";
   return (WiFi.softAP(ap_ssid));
 }
 
@@ -144,7 +144,6 @@ void webserver_setup() {
   myWebServer.on("/wifi_config", myWebServerHandle_Wifi_Config);
   myWebServer.on("/unit", myWebServerHandle_unit);
   myWebServer.on("/time", myWebServerHandle_time);
-  myWebServer.on("/gettime", myWebServerHandle_gettime);
   //===== Defined by project =============================
   webserver_setup_unit(); //---Add Project specific Web Pages to Web Server
   //======================================================
@@ -276,6 +275,47 @@ String html_Wifi_Config() {
   html_text +="<input type='hidden' name='doConnect' id='doConnect' value=0>\n";
   html_text +="<input type='submit' class='button_small' value='Connect' onclick=document.getElementById('doConnect').value=1>\n";
   html_text +="</form>\n";
+  html_text +="</body>\n";
+  html_text +="</html>\n";
+  return html_text;
+}
+
+/*
+ * =========================================
+ * Create HTML String for Unit URL "/time"
+ * return (String)
+ * =========================================
+ */
+String myWebServerHandle_time() {
+  String html_text = html_Head();
+  html_text +="<body>\n";
+  html_text +="<h1>Web Control - Time</h1>\n";
+  html_text +="<h3>Time</h3>\n";
+
+  if (myWebServer.arg("doSetTime") == "1") { //---Check if should Connect
+    int new_time_H = myWebServer.arg("time_H").toInt();
+    int new_time_m = myWebServer.arg("time_m").toInt();
+    if ((new_time_H >= 0) and (new_time_H <= 23) and (new_time_m >= 0) and (new_time_m <= 59)) {
+      time_H = new_time_H;
+      time_m = new_time_m;
+      Serial.print("Time set to: ");
+      Serial.print(time_H);
+      Serial.print(":");
+      Serial.println(time_m);
+    }
+  }
+  
+  html_text +="<form name='formTime' id='formTime' method='POST' action='/time'>\n";
+  html_text +="<input type='text' size=2 name='time_H' id='time_H' value='";
+  html_text += time_H;
+  html_text +="'> : ";
+  html_text +="<input type='text' size=2 name='time_m' id='time_m' value='";
+  html_text += time_m;
+  html_text += "'>";
+  html_text +="<input type='hidden' name='doSetTime' id='doSetTime' value=0>\n";
+  html_text +="<input type='submit' class='button_small' value='Set Time' onclick=document.getElementById('doSetTime').value=1>\n";
+  html_text +="</form><br>\n";
+  html_text +="<a class=\"button_large\" href=\"/\">Home</a>\n";
   html_text +="</body>\n";
   html_text +="</html>\n";
   return html_text;

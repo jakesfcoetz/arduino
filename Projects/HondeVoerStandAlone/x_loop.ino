@@ -1,9 +1,13 @@
 void loop() {
 
-  //---Listen for incoming HTML requests
+  //---Update Time
+  timeKeeper();
+  
+  //---Listen for incomming HTML requests
   myWebServer.handleClient();
 
-  sched_Trigger(); //---Check Trigger Schedule
+  //---Check Trigger Schedule
+  sched_Trigger();
   
   //---Trigger Received
   if(trigStatus) {

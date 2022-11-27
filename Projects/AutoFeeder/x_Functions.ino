@@ -3,7 +3,6 @@
  */
 void webserver_setup_unit() {
   myWebServer.on("/unit/trigger", myWebServerHandle_trigger); //---Project specific
-  myWebServer.on("/time", myWebServerHandle_time);
 }
 
 /*
@@ -69,14 +68,31 @@ String html_Unit() {
 void sched_Trigger() {
   for ( int i = 0; i < (sizeof(schedTrig) / sizeof(schedTrig[0])); i++ ) {
     if ((time_H == schedTrig[i][0]) and (time_m == schedTrig[i][1])) { //---Trigger Time is Now
-      if (schedTrig[i][2] == 0) { //---Check if not yet Done, Do Trigger
-        schedTrig[i][2] = 1; //---Mark as Done
+      if (schedTrig[i][3] == 0) { //---Check if not yet Done, Do Trigger
+        schedTrig[i][3] = 1; //---Mark as Done
         trigStatus = HIGH;
       }
     }
     else { //---Not Trigger Time, set as Not Done
-      if (schedTrig[i][2] == 1)
-        schedTrig[i][2] = 0;
+      if (schedTrig[i][3] == 1)
+        schedTrig[i][3] = 0;
     }
   } 
+}
+
+/*
+ * Check if feeding sequence should still be running
+ */
+void checkAction()
+{
+  if (runStatus)
+  { //---Still Running
+    if ((time_Now - trigTime_start) > trigDuration)
+    { //---if time done, switch off
+      Serial.println("Switch Off");
+      Serial.println("====================================");
+      runStatus = LOW;
+      digitalWrite(trigPin, HIGH);
+    }
+  }
 }
